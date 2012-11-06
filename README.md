@@ -20,7 +20,7 @@ NO MODIFICATION OF THE CODE WILL BE NECESSARY
 	//Set the request
 	request.setRequest("SELECT * FROM tblTest");
 	
-	//Execute the requeste
+	//Execute the request
 	request.getServerData();
 	
 	//While a result will be available
@@ -58,6 +58,10 @@ This mode is for debug your eventually error in SQL request.
 
 - For send support and contributing send a mail to : contact@application.famille-minelli.ch
 - For issue, please send to : https://github.com/MichaelMinelli/Android-MYSQL-Request/issues
+
+## License
+
+Project under Creative Commons License (CC-BY-SA) (Paternity, Modification allowed (Published under the same condition), sharing allowed, commercial use (free) allowed)
 
 ## Authors
 

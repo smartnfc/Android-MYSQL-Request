@@ -6,6 +6,8 @@
  * @Version : 1.1.0
  *
  * More info at https://github.com/MichaelMinelli/Android-MYSQL-Request
+ *
+ * Project under Creative Commons License (CC-BY-SA) (Paternity, Modification allowed (Published under the same condition), sharing allowed, commercial use (free) allowed)
  */
 
 // Get the connexion parameter
