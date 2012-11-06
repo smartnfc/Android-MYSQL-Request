@@ -61,11 +61,11 @@ This mode is for debug your eventually error in SQL request.
 
 ## License
 
-Project under Creative Commons License (CC-BY-SA) (Paternity, Modification allowed (Published under the same condition), sharing allowed, commercial use (free) allowed)
+Project under Creative Commons License (CC-BY-SA) (Paternity, Modification allowed (Published allowed under the same condition), sharing allowed, commercial use (free) allowed)
 
 ## Authors
 
-Michaël Minelli
+Michaël Minelli (Swiss)
 
 - https://twitter.com/Michael_Minelli
 - http://github.com/MichaelMinelli
