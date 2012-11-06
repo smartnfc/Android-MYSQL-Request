@@ -10,7 +10,7 @@ This project is for send MYQL request from an Android device (1.5+)
 
 NO MODIFICATION OF THE CODE WILL BE NECESSARY
 
-## Exemple
+## Exemple of use
 
 ### Request with a result (SELECT)
 
@@ -46,6 +46,13 @@ NO MODIFICATION OF THE CODE WILL BE NECESSARY
 
 	//Execute the request
 	request.executeRequest();
+	
+## Debug (Devlopement) mode
+
+For activate the Debug(Devlopment) mode you have to modify the first variable of the JAVA class (named "DEBUG")
+and set her to "true". It's show you the address of the called page, the send request and all error the class can do.
+
+This mode is for debug your eventually error in SQL request.
 
 ## Reporting bugs & contributing & support
 

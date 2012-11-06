@@ -1,3 +1,10 @@
+/*
+ * Class for do request to a MYSQL Database (One class in your android project and one PHP file)
+ * 
+ * @Author Michaël Minelli
+ * @Version 1.1.0
+ */
+
 package ch.minelli.utils;
 
 import java.io.BufferedReader;
