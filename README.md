@@ -4,11 +4,11 @@ This project is for send MYQL request from an Android device (1.5+)
 
 ## Getting Started
 
-- download https://github.com/MichaelMinelli/Android-MYSQL-Request/archive/master.zip
+- Download https://github.com/MichaelMinelli/Android-MYSQL-Request/archive/master.zip
 - Upload the php file on your server
 - Add the java file to your project
 
-NO MODIFICATION WILL BE NECESSARY
+NO MODIFICATION OF THE CODE WILL BE NECESSARY
 
 ## Exemple
 
@@ -49,8 +49,8 @@ NO MODIFICATION WILL BE NECESSARY
 
 ## Reporting bugs & contributing & support
 
-For send support and contributing send a mail to : contact@application.famille-minelli.ch
-For issue, please send to : https://github.com/MichaelMinelli/Android-MYSQL-Request/issues
+- For send support and contributing send a mail to : contact@application.famille-minelli.ch
+- For issue, please send to : https://github.com/MichaelMinelli/Android-MYSQL-Request/issues
 
 ## Authors
 
