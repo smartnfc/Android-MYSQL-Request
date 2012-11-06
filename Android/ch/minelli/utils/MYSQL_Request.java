@@ -3,6 +3,8 @@
  * 
  * @Author Michaël Minelli
  * @Version 1.1.0
+ * 
+ * More info at https://github.com/MichaelMinelli/Android-MYSQL-Request
  */
 
 package ch.minelli.utils;
