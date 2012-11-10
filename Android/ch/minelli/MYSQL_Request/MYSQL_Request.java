@@ -9,7 +9,7 @@
  * Project under Creative Commons License (CC-BY-SA) (Paternity, Modification allowed (Published under the same condition), sharing allowed, commercial use (free) allowed)
  */
 
-package ch.minelli.utils;
+package ch.minelli.MYSQL_Request;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -34,18 +34,22 @@ import android.util.Log;
 public class MYSQL_Request
 {
 	// Variable for show DEBUG message in LogCat
-	private final boolean DEBUG = false;
+	private final boolean		DEBUG			= true;
+
+	// Initialization vector and secret key for encryption (CHANGE IT! AND CHANGE IN THE PHP FILE BY THE SAME VALUE)
+	private String				iv				= "fedcba9876543210";	// Must be 16bits
+	private String				SecretKey		= "0123456789abcdef"; //Must be 16bits
 
 	// Variable for the connection to the databse
-	private String URL, dbname, host, username, password, request;
+	private String				URL, dbname, host, username, password, request;
 
 	// Variable for store the result
-	String server_result;
-	private int NB_Responce = 0;
-	private int actual_index = -1;
-	private JSONArray result;
-	ArrayList<NameValuePair> gidentifiers;
-	boolean isNoQueryRequest;
+	String						server_result;
+	private int					NB_Responce		= 0;
+	private int					actual_index	= -1;
+	private JSONArray			result;
+	ArrayList<NameValuePair>	gidentifiers;
+	boolean						isNoQueryRequest;
 
 	/**
 	 * Get the URL value
@@ -144,11 +148,9 @@ public class MYSQL_Request
 	}
 
 	/**
-	 * Constructor of the class with all the information for login to the
-	 * database
+	 * Constructor of the class with all the information for login to the database
 	 */
-	public MYSQL_Request(String php_page, String databaseName, String hostName, String user, String pass)
-	{
+	public MYSQL_Request(String php_page, String databaseName, String hostName, String user, String pass) {
 		setURL(php_page);
 		setDbname(databaseName);
 		setHost(hostName);
@@ -179,8 +181,7 @@ public class MYSQL_Request
 	}
 
 	/**
-	 * Function for get the Json value of the actual index in the result of the
-	 * database
+	 * Function for get the Json value of the actual index in the result of the database
 	 * 
 	 * @return The JSON value
 	 */
@@ -302,10 +303,14 @@ public class MYSQL_Request
 	 */
 	class getServerData_Thread extends Thread
 	{
+		@SuppressWarnings("deprecation")
 		public void run()
 		{
 			// Reset the index value
 			resetIndex();
+			
+			//Initialize the encryption class
+			MCrypt mcrypt = new MCrypt(iv, SecretKey);
 
 			InputStream is = null;
 			String server_result = "", url_reel = "";
@@ -313,11 +318,12 @@ public class MYSQL_Request
 			try
 			{
 				// Encode the url
-				url_reel = URL + "?dbname=" + URLEncoder.encode(getDbname(), "UTF-8") + "&host=" + URLEncoder.encode(getHost(), "UTF-8") + "&username=" + URLEncoder.encode(getUsername(), "UTF-8") + "&password=" + URLEncoder.encode(getPassword(), "UTF-8") + "&request=" + URLEncoder.encode(getRequest(), "UTF-8");
+				url_reel = URL + "?dbname=" + URLEncoder.encode(MCrypt.bytesToHex(mcrypt.encrypt(getDbname())), "UTF-8") + "&host=" + URLEncoder.encode(MCrypt.bytesToHex(mcrypt.encrypt(getHost())), "UTF-8") + "&username=" + URLEncoder.encode(MCrypt.bytesToHex(mcrypt.encrypt(getUsername())), "UTF-8") + "&password=" + URLEncoder.encode(MCrypt.bytesToHex(mcrypt.encrypt(getPassword())), "UTF-8") + "&request=" + URLEncoder.encode(getRequest(), "UTF-8");
 			}
 			catch (UnsupportedEncodingException e1)
 			{
 				if (DEBUG) e1.printStackTrace();
+				this.stop();
 			}
 
 			// Get the identifiers
@@ -360,7 +366,7 @@ public class MYSQL_Request
 					}
 
 					is.close();
-					server_result = sb.toString();
+					server_result = new String(mcrypt.decrypt(sb.toString()));
 				}
 				catch (Exception e)
 				{

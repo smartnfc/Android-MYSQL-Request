@@ -2,13 +2,19 @@
 
 This project is for send MYQL request from an Android device (1.5+)
 
+## Changelog
+
+10.11.2012 : Add Encryption of identifiers and response (will come : the encryption of the request)
+
 ## Getting Started
 
 - Download https://github.com/MichaelMinelli/Android-MYSQL-Request/archive/master.zip
+- Modify initialization vector and encryption key (16bits)
 - Upload the php file on your server
-- Add the java file to your project
+- Add the two java files to your project
+- Modify initialization vector and encryption key (16bits) in "MYSQL_Request.java" by the same value at the PHP file
 
-NO MODIFICATION OF THE CODE WILL BE NECESSARY
+NO OTHER MODIFICATION WILL BE NECESSARY
 
 ## Exemple of use
 
@@ -63,9 +69,16 @@ This mode is for debug your eventually error in SQL request.
 
 Project under Creative Commons License (CC-BY-SA) (Paternity, Modification allowed (Published allowed under the same condition), sharing allowed, commercial use (free) allowed)
 
-## Authors
+## Authors / Contributors
+
+### Authors
 
 Michaël Minelli (Swiss)
 
 - https://twitter.com/Michael_Minelli
 - http://github.com/MichaelMinelli
+
+### Contributors
+
+Android Snippets (for the encryption part)
+- http://www.androidsnippets.com/encrypt-decrypt-between-android-and-php
