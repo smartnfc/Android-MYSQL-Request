@@ -4,7 +4,7 @@
 * PHP file for do request to a MYSQL Database and show the result in JSON
 *
 * @Author Michaël Minelli
-* @Version : 1.1.0
+* @Version : 1.2.0
 *
 * More info at https://github.com/MichaelMinelli/Android-MYSQL-Request
 *
