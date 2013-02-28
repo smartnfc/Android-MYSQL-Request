@@ -1,21 +1,21 @@
 <?php
 
 /*
-* PHP file for do request to a MYSQL Database and show the result in JSON
-*
-* @Author MichaÃ«l Minelli
-* @Version : 1.1.0
-*
-* More info at https://github.com/MichaelMinelli/Android-MYSQL-Request
-*
-* Project under Creative Commons License (CC-BY-SA) (Paternity, Modification allowed (Published under the same condition), sharing allowed, commercial use (free) allowed)
-*/
+ * PHP file for do request to a MYSQL Database and show the result in JSON
+ * 
+ * @Author Michaël Minelli
+ * @Version : 1.1.0
+ *
+ * More info at https://github.com/MichaelMinelli/Android-MYSQL-Request
+ *
+ * Project under Creative Commons License (CC-BY-SA) (Paternity, Modification allowed (Published under the same condition), sharing allowed, commercial use (free) allowed)
+ */
 
 /**
-* Thanks to androidsnippets for this ancryption/decryption class
-*
-* @author http://www.androidsnippets.com/encrypt-decrypt-between-android-and-php
-*/
+ * Thanks to androidsnippets for this ancryption/decryption class
+ * 
+ * @author http://www.androidsnippets.com/encrypt-decrypt-between-android-and-php
+ */
 class MCrypt
 {
     // Initialization vector and secret key for encryption (CHANGE IT! AND CHANGE IN THE JAVA FILE BY THE SAME VALUE)
@@ -30,7 +30,7 @@ class MCrypt
     function encrypt($str)
     {
 
-        //$key = $this->hex2bin($key);
+        //$key = $this->hex2bin($key);    
         $iv = $this->iv;
 
         $td = mcrypt_module_open('rijndael-128', '', 'cbc', $iv);
@@ -78,24 +78,26 @@ class MCrypt
 $mcrypt = new MCrypt();
 
 // Get the connexion parameter
-$dbname = $mcrypt->decrypt($_REQUEST['dbname']);
-$host = $mcrypt->decrypt($_REQUEST['host']);
-$username = $mcrypt->decrypt($_REQUEST['username']);
-$password = $mcrypt->decrypt($_REQUEST['password']);
+$dbname = $mcrypt->decrypt($_GET['dbname']);
+$host = $mcrypt->decrypt($_GET['host']);
+$username = $mcrypt->decrypt($_GET['username']);
+$password = $mcrypt->decrypt($_GET['password']);
 
 //Open the connexion to the database
-$connect = new PDO('mysql:host=' . $host . ';dbname=' . $dbname, $username, $password);
-$connect->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$connect->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-$connect->exec("SET CHARACTER SET utf8");
+$connect = mysql_connect($host, $username, $password);
+mysql_select_db($dbname, $connect);
+
+//echo $mcrypt->decrypt($_GET['request']);
+
 
 //Execute the request
-$result = $connect->prepare(str_replace("\\'", "'", $_REQUEST['request']));
-$result->execute();
+$q = mysql_query(str_replace("\\'", "'", $_GET['request']));
+while ($e = mysql_fetch_assoc($q))
+    $output[] = $e;
 
 //Show the JSON value
-print($mcrypt->encrypt(json_encode($result->fetchAll())));
+print($mcrypt->encrypt(json_encode($output)));
 
 //Close the MYSQL connexion
-$result->closeCursor();
+mysql_close();
 ?>

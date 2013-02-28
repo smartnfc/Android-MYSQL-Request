@@ -1,6 +1,6 @@
 # Description
 
-This project is for send MYQL request from an Android device (1.5+)
+This project is for send MYSQL request from an Android device (1.5+)
 
 ## Changelog
 
@@ -53,7 +53,7 @@ NO OTHER MODIFICATION WILL BE NECESSARY
 	//Execute the request
 	request.executeRequest();
 	
-## Debug (Devlopement) mode
+## Debug (Development) mode
 
 For activate the Debug(Devlopment) mode you have to modify the first variable of the JAVA class (named "DEBUG")
 and set her to "true". It's show you the address of the called page, the send request and all error the class can do.
