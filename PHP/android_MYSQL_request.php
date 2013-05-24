@@ -4,7 +4,7 @@
 * PHP file for do request to a MYSQL Database and show the result in JSON
 *
 * @Author Michaël Minelli
-* @Version : 1.2.0
+* @Version : 2.0.0
 *
 * More info at https://github.com/MichaelMinelli/Android-MYSQL-Request
 *
@@ -29,7 +29,6 @@ class MCrypt
 
     function encrypt($str)
     {
-
         //$key = $this->hex2bin($key);
         $iv = $this->iv;
 
@@ -93,8 +92,11 @@ $connect->exec("SET CHARACTER SET utf8");
 $result = $connect->prepare(str_replace("\\'", "'", $_REQUEST['request']));
 $result->execute();
 
-//Show the JSON value
-print($mcrypt->encrypt(json_encode($result->fetchAll())));
+//If we need to get de last insert id
+if (isset($_REQUEST['isNeedToGetId']))
+	echo $mcrypt->encrypt($connect->lastInsertId());
+else
+	print($mcrypt->encrypt(json_encode($result->fetchAll()))); //Show the JSON value
 
 //Close the MYSQL connexion
 $result->closeCursor();

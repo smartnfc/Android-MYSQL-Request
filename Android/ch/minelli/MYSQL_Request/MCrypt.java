@@ -1,33 +1,33 @@
 /**
  * Thanks to androidsnippets for this ancryption/decryption class
- * 
+ *
  * @author http://www.androidsnippets.com/encrypt-decrypt-between-android-and-php
  */
 
 package ch.minelli.MYSQL_Request;
 
-import java.security.NoSuchAlgorithmException;
-
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.security.NoSuchAlgorithmException;
 
 public class MCrypt
 {
 
-	private String			iv;
-	private IvParameterSpec	ivspec;
-	private SecretKeySpec	keyspec;
-	private Cipher			cipher;
+	private String          iv;
+	private IvParameterSpec ivspec;
+	private SecretKeySpec   keyspec;
+	private Cipher          cipher;
 
-	private String			SecretKey;
+	private String SecretKey;
 
-	public MCrypt(String param_iv, String param_Secret_Key) {
-		
+	public MCrypt(String param_iv, String param_Secret_Key)
+	{
+
 		iv = param_iv;
 		SecretKey = param_Secret_Key;
-		
+
 		ivspec = new IvParameterSpec(iv.getBytes());
 
 		keyspec = new SecretKeySpec(SecretKey.getBytes(), "AES");
@@ -36,16 +36,10 @@ public class MCrypt
 		{
 			cipher = Cipher.getInstance("AES/CBC/NoPadding");
 		}
-		catch (NoSuchAlgorithmException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (NoSuchPaddingException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		catch (NoSuchAlgorithmException ignored)
+		{ }
+		catch (NoSuchPaddingException ignored)
+		{ }
 	}
 
 	public byte[] encrypt(String text)
@@ -59,16 +53,16 @@ public class MCrypt
 
 			encrypted = cipher.doFinal(padString(text).getBytes());
 		}
-		catch (Exception e)
-		{
-		}
+		catch (Exception ignored)
+		{ }
 
 		return encrypted;
 	}
 
 	public byte[] decrypt(String code) throws Exception
 	{
-		if (code == null || code.length() == 0) throw new Exception("Empty string");
+		if (code == null || code.length() == 0)
+			throw new Exception("Empty string");
 
 		byte[] decrypted = null;
 
@@ -120,7 +114,7 @@ public class MCrypt
 			byte[] buffer = new byte[len];
 			for (int i = 0; i < len; i++)
 			{
-				buffer[i] = (byte) Integer.parseInt(str.substring(i * 2, i * 2 + 2), 16);
+				buffer[i] = (byte)Integer.parseInt(str.substring(i * 2, i * 2 + 2), 16);
 			}
 			return buffer;
 		}

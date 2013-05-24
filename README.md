@@ -53,6 +53,20 @@ NO OTHER MODIFICATION WILL BE NECESSARY
 	//Execute the request
 	request.executeRequest();
 	
+### Request with inserted id (INSERT INTO)
+
+	//Initialize the class with the information for the identification
+	MYSQL_Request request = new MYSQL_Request(MYSQL_Page, MYSQL_Database, MYSQL_Server, MYSQL_Username, MYSQL_Password);
+
+	//Set the request
+	request.setRequest("INSERT INTO tblTest (testID, testName) VALUES (NULL, 'GitHub');");
+
+	//Execute the request with the recuperation of the ID
+	request.executeRequestWithID();
+	
+	//Stock the ID
+	int id = Integer.parseInt(requete.getResultID());
+	
 ## Debug (Development) mode
 
 For activate the Debug(Devlopment) mode you have to modify the first variable of the JAVA class (named "DEBUG")

@@ -2,7 +2,7 @@
  * Class for do request to a MYSQL Database (One class in your android project and one PHP file)
  * 
  * @Author Michaël Minelli
- * @Version 1.1.0
+ * @Version 2.0.0
  * 
  * More info at https://github.com/MichaelMinelli/Android-MYSQL-Request
  * 
@@ -11,13 +11,7 @@
 
 package ch.minelli.MYSQL_Request;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-
+import android.util.Log;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -25,31 +19,35 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.util.Log;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 public class MYSQL_Request
 {
 	// Variable for show DEBUG message in LogCat
-	private final boolean		DEBUG			= true;
+	private final boolean DEBUG = false;
 
 	// Initialization vector and secret key for encryption (CHANGE IT! AND CHANGE IN THE PHP FILE BY THE SAME VALUE)
-	private String				iv				= "fedcba9876543210";	// Must be 16bits
-	private String				SecretKey		= "0123456789abcdef"; //Must be 16bits
+	private String iv        = "fedcba9876543210";    // Must be 16bits
+	private String SecretKey = "0123456789abcdef"; //Must be 16bits
 
 	// Variable for the connection to the databse
-	private String				URL, dbname, host, username, password, request;
+	private String URL, dbname, host, username, password, request, resultID;
 
 	// Variable for store the result
-	String						server_result;
-	private int					NB_Responce		= 0;
-	private int					actual_index	= -1;
-	private JSONArray			result;
-	ArrayList<NameValuePair>	gidentifiers;
-	boolean						isNoQueryRequest;
+	int NB_Responce  = 0;
+	int actual_index = -1;
+	JSONArray                result;
+	ArrayList<NameValuePair> gidentifiers;
+	boolean                  isNoQueryRequest;
+	boolean	isNeedToGetId;
 
 	/**
 	 * Get the URL value
@@ -148,9 +146,18 @@ public class MYSQL_Request
 	}
 
 	/**
+	 * Get the last insert ID call by the function "executeRequestWithID"
+	 */
+	public String getResultID()
+	{
+		return resultID;
+	}
+
+	/**
 	 * Constructor of the class with all the information for login to the database
 	 */
-	public MYSQL_Request(String php_page, String databaseName, String hostName, String user, String pass) {
+	public MYSQL_Request(String php_page, String databaseName, String hostName, String user, String pass)
+	{
 		setURL(php_page);
 		setDbname(databaseName);
 		setHost(hostName);
@@ -160,15 +167,12 @@ public class MYSQL_Request
 
 	/**
 	 * If possible get the next value of the result
-	 * 
+	 *
 	 * @return If a entry is found
 	 */
 	public boolean getNextEntry()
 	{
-		if (++actual_index < NB_Responce)
-			return true;
-		else
-			return false;
+		return ++actual_index < NB_Responce;
 	}
 
 	/**
@@ -182,7 +186,7 @@ public class MYSQL_Request
 
 	/**
 	 * Function for get the Json value of the actual index in the result of the database
-	 * 
+	 *
 	 * @return The JSON value
 	 */
 	public JSONObject getJsonValue()
@@ -194,9 +198,9 @@ public class MYSQL_Request
 
 	/**
 	 * Get the JSON value of a specified index
-	 * 
-	 * @param index
-	 *            The index of the search result
+	 *
+	 * @param index The index of the search result
+	 *
 	 * @return The JSON value
 	 */
 	public JSONObject getJsonValue(int index)
@@ -212,7 +216,7 @@ public class MYSQL_Request
 				{
 					return result.getJSONObject(actual_index);
 				}
-				catch (Exception e)
+				catch (Exception ignored)
 				{}
 			}
 			else
@@ -221,7 +225,7 @@ public class MYSQL_Request
 					// Return the actual JSON value
 					return result.getJSONObject(actual_index);
 				}
-				catch (Exception e)
+				catch (Exception ignored)
 				{}
 		else
 			try
@@ -229,7 +233,7 @@ public class MYSQL_Request
 				// Return the requested JSON value
 				return result.getJSONObject(index);
 			}
-			catch (Exception e)
+			catch (Exception ignored)
 			{}
 
 		return null;
@@ -237,7 +241,7 @@ public class MYSQL_Request
 
 	/**
 	 * Execute the request without identifiers
-	 * 
+	 *
 	 * It's for request without responce
 	 */
 	public void executeRequest()
@@ -247,15 +251,33 @@ public class MYSQL_Request
 
 	/**
 	 * Execute the request with the identifiers
-	 * 
+	 *
 	 * It's for request without responce
-	 * 
-	 * @param identifiers
-	 *            Identifies of the website
+	 *
+	 * @param identifiers Identifies of the website
 	 */
 	public void executeRequest(ArrayList<NameValuePair> identifiers)
 	{
 		launchRequest(identifiers, true);
+	}
+
+	/**
+	 * Execute the request and store the last insert ID
+	 */
+	public void executeRequestWithID()
+	{
+		executeRequestWithID(null);
+	}
+
+	/**
+	 * Execute the request and store the last insert ID
+	 *
+	 * @param identifiers Identifies of the website
+	 */
+	public void executeRequestWithID(ArrayList<NameValuePair> identifiers)
+	{
+		isNeedToGetId = true;
+		launchRequest(identifiers, false);
 	}
 
 	/**
@@ -268,9 +290,8 @@ public class MYSQL_Request
 
 	/**
 	 * Execute the request with identifiers Stock the response of the page
-	 * 
-	 * @param identifiers
-	 *            Identifies of the website
+	 *
+	 * @param identifiers Identifies of the website
 	 */
 	public void getServerData(ArrayList<NameValuePair> identifiers)
 	{
@@ -279,11 +300,9 @@ public class MYSQL_Request
 
 	/**
 	 * Launch the request in a different thread and wait for the response
-	 * 
-	 * @param identifiers
-	 *            Identifies of the website
-	 * @param isNoQuery
-	 *            Is it a no query request
+	 *
+	 * @param identifiers Identifies of the website
+	 * @param isNoQuery   Is it a no query request
 	 */
 	private void launchRequest(ArrayList<NameValuePair> identifiers, boolean isNoQuery)
 	{
@@ -297,37 +316,26 @@ public class MYSQL_Request
 	}
 
 	/**
-	 * the thread for execute the request (for the 4.0.0+ compatibility)
-	 * 
+	 * The thread for execute the request (for the 4.0.0+ compatibility)
+	 *
 	 * @author Michaël Minelli
 	 */
 	class getServerData_Thread extends Thread
 	{
-		@SuppressWarnings("deprecation")
 		public void run()
 		{
 			// Reset the index value
 			resetIndex();
-			
+
 			//Initialize the encryption class
 			MCrypt mcrypt = new MCrypt(iv, SecretKey);
 
 			InputStream is = null;
-			String server_result = "", url_reel = "";
-
-			try
-			{
-				// Encode the url
-				url_reel = URL + "?dbname=" + URLEncoder.encode(MCrypt.bytesToHex(mcrypt.encrypt(getDbname())), "UTF-8") + "&host=" + URLEncoder.encode(MCrypt.bytesToHex(mcrypt.encrypt(getHost())), "UTF-8") + "&username=" + URLEncoder.encode(MCrypt.bytesToHex(mcrypt.encrypt(getUsername())), "UTF-8") + "&password=" + URLEncoder.encode(MCrypt.bytesToHex(mcrypt.encrypt(getPassword())), "UTF-8") + "&request=" + URLEncoder.encode(getRequest(), "UTF-8");
-			}
-			catch (UnsupportedEncodingException e1)
-			{
-				if (DEBUG) e1.printStackTrace();
-				this.stop();
-			}
+			String server_result = "";
 
 			// Get the identifiers
-			if (gidentifiers == null) gidentifiers = new ArrayList<NameValuePair>();
+			if (gidentifiers == null)
+				gidentifiers = new ArrayList<NameValuePair>();
 
 			try
 			{
@@ -335,12 +343,21 @@ public class MYSQL_Request
 				if (DEBUG)
 				{
 					Log.d("request", request);
-					Log.d("url", url_reel);
+					Log.d("url", URL);
 				}
+
+				//Parameter POST
+				gidentifiers.add(new BasicNameValuePair("dbname", MCrypt.bytesToHex(mcrypt.encrypt(getDbname()))));
+				gidentifiers.add(new BasicNameValuePair("host", MCrypt.bytesToHex(mcrypt.encrypt(getHost()))));
+				gidentifiers.add(new BasicNameValuePair("username", MCrypt.bytesToHex(mcrypt.encrypt(getUsername()))));
+				gidentifiers.add(new BasicNameValuePair("password", MCrypt.bytesToHex(mcrypt.encrypt(getPassword()))));
+				gidentifiers.add(new BasicNameValuePair("request", getRequest()));
+				if (isNeedToGetId)
+					gidentifiers.add(new BasicNameValuePair("isNeedToGetId", "yes"));
 
 				// Send an http request to the URL an take the result
 				HttpClient httpclient = new DefaultHttpClient();
-				HttpPost httppost = new HttpPost(url_reel);
+				HttpPost httppost = new HttpPost(URL);
 				httppost.setEntity(new UrlEncodedFormEntity(gidentifiers));
 				HttpResponse response = httpclient.execute(httppost);
 				HttpEntity entity = response.getEntity();
@@ -348,7 +365,8 @@ public class MYSQL_Request
 			}
 			catch (Exception e)
 			{
-				if (DEBUG) Log.d("log_tag", "Error in http connection " + e.toString());
+				if (DEBUG)
+					Log.d("log_tag", "Error in http connection " + e.toString());
 			}
 
 			// Don't enter if it's a no query request
@@ -357,12 +375,12 @@ public class MYSQL_Request
 				try
 				{
 					// Construct the string result
-					BufferedReader reader = new BufferedReader(new InputStreamReader(is, "iso-8859-1"), 8);
+					BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"), 16384);
 					StringBuilder sb = new StringBuilder();
-					String line = null;
+					String line;
 					while ((line = reader.readLine()) != null)
 					{
-						sb.append(line + "\n");
+						sb.append(line).append("\n");
 					}
 
 					is.close();
@@ -370,8 +388,13 @@ public class MYSQL_Request
 				}
 				catch (Exception e)
 				{
-					if (DEBUG) Log.d("log_tag", "Error converting result " + e.toString());
+					if (DEBUG)
+						Log.d("log_tag", "Error converting result " + e.toString());
 				}
+
+				//Delete the null character
+				if (server_result.contains("\u0000"))
+					server_result = server_result.substring(0, server_result.indexOf("\u0000"));
 
 				try
 				{
@@ -385,15 +408,24 @@ public class MYSQL_Request
 					}
 					else
 					{
-						result = new JSONArray(server_result);
-						NB_Responce = result.length();
+						//If we need to récupérate ID who was insert
+						if (isNeedToGetId)
+							resultID = server_result;
+						else
+						{
+							result = new JSONArray(server_result);
+							NB_Responce = result.length();
+						}
 					}
 				}
 				catch (JSONException e)
 				{
-					if (DEBUG) Log.d("log_tag", "Error parsing data " + e.toString());
+					if (DEBUG)
+						Log.d("log_tag", "Error parsing data " + e.toString());
 				}
 			}
+
+			isNeedToGetId = false;
 		}
 	}
 }
