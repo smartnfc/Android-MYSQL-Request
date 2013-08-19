@@ -2,7 +2,8 @@
  * Class for do request to a MYSQL Database (One class in your android project and one PHP file)
  * 
  * @Author Michaël Minelli
- * @Version 2.0.0
+ * @Contributor Marco Rinalducci
+ * @Version 2.1.0
  * 
  * More info at https://github.com/MichaelMinelli/Android-MYSQL-Request
  * 
@@ -143,6 +144,28 @@ public class MYSQL_Request
 	public void setRequest(String request)
 	{
 		this.request = request;
+	}
+	
+	/**
+	 * Set the request update
+	 */
+	public void setRequestUpdate(String table, HashMap<String, String> values, String where)
+	{
+		String tempRequest = "UPDATE "+table+" SET ";
+
+		Iterator mIterator = values.keySet().iterator();
+		while(mIterator.hasNext()) {
+			String key=(String)mIterator.next();
+			String value=(String)values.get(key);
+			if(mIterator.hasNext())
+				tempRequest += key+" = '"+value+"', ";
+			else
+				tempRequest += key+" = '"+value+"'";
+		}
+
+		tempRequest += " WHERE "+where;
+
+		this.request = tempRequest;
 	}
 
 	/**

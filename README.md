@@ -53,6 +53,24 @@ NO OTHER MODIFICATION WILL BE NECESSARY
 	//Execute the request
 	request.executeRequest();
 	
+### Request UPDATE
+
+	//Initialize the class with the information for the identification
+	MYSQL_Request request = new MYSQL_Request(SQLpagePHP, SQLBDD, SQLserver, SQLuser, SQLpassword);
+
+	//Creating new HashMap
+	HashMap<String, String> values = new HashMap<String, String>();
+
+	//Add values to HashMap
+	values.put(TAG_MAJ_TIME, majTime);
+	values.put(TAG_LUN_DEB, lunDeb);
+	values.put(TAG_LUN_FIN, lunFin);
+	values.put(TAG_LUN_COMM, lunComm);
+
+	//Set the request
+	request.setRequestUpdate("horaire",values,"id = '1'");
+	request.executeRequest();
+	
 ### Request with inserted id (INSERT INTO)
 
 	//Initialize the class with the information for the identification
@@ -88,11 +106,11 @@ Project under Creative Commons License (CC-BY-SA) (Paternity, Modification allow
 ### Authors
 
 Michaël Minelli (Swiss)
-
-- https://twitter.com/Michael_Minelli
 - http://github.com/MichaelMinelli
 
 ### Contributors
+
+Marco Rinalducci (SQL Update part)
 
 Android Snippets (for the encryption part)
 - http://www.androidsnippets.com/encrypt-decrypt-between-android-and-php
